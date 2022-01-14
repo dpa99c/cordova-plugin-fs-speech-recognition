@@ -1,9 +1,9 @@
 {
-  "name": "phonegap-plugin-speech-recognition",
+  "name": "@fisherleasystems/cordova-plugin-fs-speech-recognition",
   "version": "0.3.5",
   "description": "Cordova Speech Recognition Plugin",
   "cordova": {
-    "id": "phonegap-plugin-speech-recognition",
+    "id": "cordova-plugin-fs-speech-recognition",
     "platforms": [
       "android",
       "browser",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wifisher/SpeechRecognitionPlugin.git"
+    "url": "https://github.com/FisherleaSystems/cordova-plugin-fs-speech-recognition.git"
   },
   "keywords": [
     "cordova",
@@ -33,9 +33,20 @@
   "contributors": [
     "Wayne Fisher <wayne@fisherlea.com"
   ],
+  "dependencies": {},
+  "deprecated": false,
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/wifisher/SpeechRecognitionPlugin/issues"
+  "maintainers": [
+    {
+      "name": "Wayne Fisher",
+      "email": "wayne@fisherlea.com"
+    }
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/FisherleaSystems"
   },
-  "homepage": "https://github.com/wifisher/SpeechRecognitionPlugin#readme"
+  "bugs": {
+    "url": "https://github.com/FisherleaSystems/cordova-plugin-fs-speech-recognition/issues"
+  },
+  "homepage": "https://github.com/FisherleaSystems/cordova-plugin-fs-speech-recognition#readme"
 }
