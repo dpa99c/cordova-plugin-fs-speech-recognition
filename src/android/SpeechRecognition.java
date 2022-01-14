@@ -1,4 +1,4 @@
-package org.apache.cordova.speech;
+package com.fisherlea.cordova.speech;
 
 import java.util.ArrayList;
 
