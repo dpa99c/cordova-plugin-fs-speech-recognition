@@ -44,7 +44,14 @@
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
-        </config-file>
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+            <queries>
+                <intent>
+                    <action
+                        android:name="android.speech.RecognitionService" />
+                </intent>
+            </queries>
+         </config-file>
         <source-file src="src/android/SpeechRecognition.java" target-dir="src/org/apache/cordova/speech" />
     </platform>
     <!-- ios -->
