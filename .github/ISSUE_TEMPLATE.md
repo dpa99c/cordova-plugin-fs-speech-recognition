@@ -17,7 +17,7 @@
 
 #### Plugin version
 
-    cordova plugin version | grep phonegap-plugin-speech-recognition   # e.g. 1.5.3
+    cordova plugin version | grep cordova-plugin-fs-speech-recognition   # e.g. 1.5.3
 
 #### Sample Push Data Payload
 

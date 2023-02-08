@@ -10,13 +10,6 @@
       "ios"
     ]
   },
-  "engines": {
-    "cordovaDependencies": {
-      "0.3.0": {
-        "cordova-android": ">6.3.0"
-      }
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/FisherleaSystems/cordova-plugin-fs-speech-recognition.git"
@@ -35,6 +28,7 @@
   ],
   "dependencies": {},
   "deprecated": false,
+  "homepage": "https://github.com/FisherleaSystems/cordova-plugin-fs-speech-recognition#readme",
   "license": "MIT",
   "maintainers": [
     {
@@ -48,5 +42,7 @@
   "bugs": {
     "url": "https://github.com/FisherleaSystems/cordova-plugin-fs-speech-recognition/issues"
   },
-  "homepage": "https://github.com/FisherleaSystems/cordova-plugin-fs-speech-recognition#readme"
+    "scripts": {
+    "test": "echo \"No tests to run.\""
+  }
 }

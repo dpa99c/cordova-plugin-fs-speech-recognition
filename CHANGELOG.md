@@ -66,6 +66,11 @@ Improved compatibility with the W3C specification (https://w3c.github.io/speech-
 
 -   Fixed issue with double results on some Android devices (LG G7 ThinQ for example; API 28)
 
-# Update 2022/01.14
+# Update v1.0.1 2022/01.14
 
 -   Renamed plugin and moved to Fisherlea Systems GitHub repository.
+
+# Update v1.0.2 2023/02.08
+
+-   Add GitHub action to automatically release to GitHub packages.
+-   No source changes.
