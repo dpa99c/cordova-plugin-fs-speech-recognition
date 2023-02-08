@@ -1,6 +1,6 @@
 {
   "name": "@fisherleasystems/cordova-plugin-fs-speech-recognition",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Cordova Speech Recognition Plugin",
   "cordova": {
     "id": "cordova-plugin-fs-speech-recognition",
@@ -42,7 +42,7 @@
   "bugs": {
     "url": "https://github.com/FisherleaSystems/cordova-plugin-fs-speech-recognition/issues"
   },
-    "scripts": {
+  "scripts": {
     "test": "echo \"No tests to run.\""
   }
 }
