@@ -43,8 +43,10 @@
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
             <uses-permission android:name="android.permission.RECORD_AUDIO" />
             <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
             <queries>
                 <intent>
                     <action
