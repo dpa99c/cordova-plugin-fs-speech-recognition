@@ -15,6 +15,11 @@
 @property (assign) BOOL speechStartSent;
 @property (assign) BOOL resetAudioEngine;
 
+@property (nonatomic, strong) NSTimer *silenceTimer;
+@property (nonatomic) NSTimeInterval silenceThreshold;
+@property (nonatomic) float audioLevelThreshold;
+@property (nonatomic) BOOL isSpeaking;
+
 - (void) init:(CDVInvokedUrlCommand*)command;
 - (void) start:(CDVInvokedUrlCommand*)command;
 - (void) stop:(CDVInvokedUrlCommand*)command;

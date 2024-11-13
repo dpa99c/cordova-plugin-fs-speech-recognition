@@ -1,6 +1,6 @@
 var exec = require("cordova/exec");
 
-/** 
+/**
     attribute SpeechGrammarList grammars;
     attribute DOMString lang;
     attribute boolean continuous;
@@ -15,7 +15,9 @@ var SpeechRecognition = function () {
     this.interimResults = false;
     this.maxAlternatives = 1;
     this.serviceURI = "";
-    
+    this.silenceThreshold = 2; // seconds of silence before stopping
+    this.audioLevelThreshold = 0.005; // minimum audio level below which the silence threshold is met
+
     // event methods
     this.onaudiostart = null;
     this.onsoundstart = null;
@@ -102,7 +104,7 @@ SpeechRecognition.prototype.start = function () {
         }
     };
 
-    exec(successCallback, errorCallback, "SpeechRecognition", "start", [this.lang, this.interimResults, this.maxAlternatives, this.serviceURI]);
+    exec(successCallback, errorCallback, "SpeechRecognition", "start", [this.lang, this.interimResults, this.maxAlternatives, this.serviceURI, this.silenceThreshold, this.audioLevelThreshold]);
 };
 
 SpeechRecognition.prototype.stop = function() {

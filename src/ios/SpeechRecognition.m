@@ -42,6 +42,9 @@
     self.audioEngine = [[AVAudioEngine alloc] init];
     self.audioSession = [AVAudioSession sharedInstance];
 
+    self.isSpeaking = NO;
+    self.silenceTimer = nil;
+
     if(![self.audioSession setCategory:self.sessionCategory
                                   mode:AVAudioSessionModeMeasurement
                                options:(AVAudioSessionCategoryOptionAllowBluetooth|AVAudioSessionCategoryOptionAllowBluetoothA2DP)
@@ -80,11 +83,11 @@
         NSLog(@"[sr] Now using device %@", port.portType);
     } else if ([reason unsignedIntegerValue] == AVAudioSessionRouteChangeReasonCategoryChange) {
         NSLog(@"[sr] AVAudioSessionRouteChangeReasonCategoryChange");
-        
+
         AVAudioSessionCategory category = [self.audioSession category];
-        
+
         NSLog(@"[sr] AVAudioSession category: %@", category);
-        
+
         if(![category isEqualToString:AVAudioSessionCategoryRecord] &&
            ![category isEqualToString:AVAudioSessionCategoryPlayAndRecord]) {
             if([category isEqualToString:AVAudioSessionCategoryPlayback]) {
@@ -92,7 +95,7 @@
             } else {
                 category = self.sessionCategory;
             }
-            
+
             [self.audioSession setCategory:category error:nil];
         }
     }
@@ -130,7 +133,7 @@
 
     self.command = command;
     [self sendEvent:(NSString *)@"start"];
-    
+
     if(self.resetAudioEngine) {
         NSLog(@"[sr] Reseting audioEngine");
         self.audioEngine = [self.audioEngine init];
@@ -147,6 +150,9 @@
     if (lang && [lang isEqualToString:@"en"]) {
         lang = @"en-US";
     }
+
+    self.silenceThreshold = [[self.command argumentAtIndex:4] floatValue];
+    self.audioLevelThreshold = [[self.command argumentAtIndex:5] floatValue];
 
     if (![self permissionIsSet]) {
         [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status){
@@ -235,14 +241,70 @@
 
         AVAudioFormat *recordingFormat = [self.audioEngine.inputNode outputFormatForBus:0];
         DBG1(@"[sr] recordingFormat: sampleRate:%lf", recordingFormat.sampleRate);
-        [self.audioEngine.inputNode installTapOnBus:0 bufferSize:1024 format:recordingFormat block:^(AVAudioPCMBuffer * _Nonnull buffer, AVAudioTime * _Nonnull when) {
-            [self.recognitionRequest appendAudioPCMBuffer:buffer];
-        }];
+
+      // Install tap with silence detection
+      [self.audioEngine.inputNode installTapOnBus:0
+                                       bufferSize:1024
+                                           format:recordingFormat
+                                            block:^(AVAudioPCMBuffer * _Nonnull buffer, AVAudioTime * _Nonnull when) {
+        [self.recognitionRequest appendAudioPCMBuffer:buffer];
+
+        // Calculate audio level
+        float audioLevel = [self calculateAudioLevel:buffer];
+        DBG1(@"[sr] audioLevel: %f", audioLevel);
+
+        if (audioLevel > self.audioLevelThreshold) {
+          DBG(@"[sr] Speaking");
+          if (!self.isSpeaking) {
+            self.isSpeaking = YES;
+          }
+          if(self.silenceTimer != nil){
+            DBG(@"[sr] Invalidate silenceTimer");
+            [self.silenceTimer invalidate];
+            self.silenceTimer = nil;
+          }
+        } else {
+          DBG(@"[sr] Silence");
+          if (self.isSpeaking) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+              if(self.silenceTimer == nil){
+                DBG(@"[sr] Set silenceTimer");
+                self.silenceTimer = [NSTimer scheduledTimerWithTimeInterval:self.silenceThreshold
+                                                                     target:self
+                                                                   selector:@selector(handleSilence)
+                                                                   userInfo:nil
+                                                                    repeats:NO];
+              }
+            });
+          }
+        }
+      }];
 
         [self.audioEngine prepare];
         [self.audioEngine startAndReturnError:nil];
 
         [self sendEvent:(NSString *)@"audiostart"];
+    }
+}
+
+- (float)calculateAudioLevel:(AVAudioPCMBuffer *)buffer {
+    float sum = 0.0;
+    float *samples = buffer.floatChannelData[0];
+    NSUInteger count = buffer.frameLength;
+
+    // Calculate RMS (Root Mean Square) of the audio buffer
+    for (NSUInteger i = 0; i < count; i++) {
+        sum += samples[i] * samples[i];
+    }
+
+    return sqrtf(sum / count);
+}
+
+- (void)handleSilence {
+    NSLog(@"[sr] handleSilence()");
+    if (self.isSpeaking) {
+        self.isSpeaking = NO;
+        [self stopAndRelease];
     }
 }
 
@@ -330,6 +392,11 @@
 -(void) stopAndRelease
 {
     DBG(@"[sr] stopAndRelease()");
+
+    [self.silenceTimer invalidate];
+    self.silenceTimer = nil;
+    self.isSpeaking = NO;
+
     if (self.audioEngine.isRunning) {
         [self.audioEngine stop];
         [self sendEvent:(NSString *)@"audioend"];
